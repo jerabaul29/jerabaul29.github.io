@@ -11,7 +11,7 @@ When performing daily work, there are a number of very repetitive tasks that qui
 
 My favorite tool for navigating between folders and paths is is to use the ```z``` script, available on github: [https://github.com/rupa/z](https://github.com/rupa/z) . This is a pure bash script that tracks which folders you work from, and offers a "frecency" ranking of these. In addition, I created a couple of very simple wrappers around ```z``` to make it easier to use in my workflow. These are the ```zg``` (z-Grep) and ```zx``` (z-eXecute) scripts, that are available on my github: [https://github.com/jerabaul29/my_bash_scripts](https://github.com/jerabaul29/my_bash_scripts) ,  see the Readme section "zg.sh and zx.sh" for more information and installation instructions.
 
-Using zg and zx is then very easy. After a bit of using your terminal "as usual" so that z can learn about your paths, you can use these by doing:
+Using ```zg``` and ```zx``` is then very easy. After a bit of using your terminal "as usual" so that ```z``` can learn about your paths, you can use these by doing:
 
 ```bash
 ~$ zg data roms  # search for paths that contain "data" and "roms"
@@ -23,7 +23,7 @@ cd /home/jrmet/Desktop/Data/ROMS_example_data
 
 # Finding again commands in the terminal history
 
-Another very common pattern is to look for a previously issued command and either repeat it, or use it as an inspiration for the next command to issue. There are several possibilities for this out-of-the-box: for example, use the ```Ctrl-r``` pattern to search for strings in history, and hitting it several times in order to go back step by step further back in history. However, this is a bit slow and unflexible in my opinion. As a result, I ended up quite often using patterns such as:
+Another very common pattern is to look for a previously issued command and either repeat it, or use it as an inspiration for the next command to issue. There are several possibilities for this out-of-the-box: for example, use the ```Ctrl-r``` pattern to search for strings in history, and hitting it several times in order to go back step by step further back in history. However, this is a bit slow and inflexible in my opinion. As a result, I ended up quite often using patterns such as:
 
 ```bash
 ~$ history | grep pass | grep generate | grep symbol
@@ -31,7 +31,7 @@ Another very common pattern is to look for a previously issued command and eithe
  8128  pass generate --no-symbols something_else/password
 ```
 
-In addition to this being a bit many pipe operators, there are also some cases when you may get many duplicated hits. In order to solve this, I wrote a couple of very simple scripts to 1) perform a search a la history grep, 2) remove duplicates, 3) present everything in a way similar to zg and zx. To get the scripts, see: [https://github.com/jerabaul29/my_bash_scripts/blob/master/Readme.md](https://github.com/jerabaul29/my_bash_scripts/blob/master/Readme.md), section "histg.sh and histx.sh". Once these are installed, I can perform searches such as:
+In addition to this being a bit many pipe operators, there are also some cases when you may get many duplicated hits. In order to solve this, I wrote a couple of very simple scripts to 1) perform a search a la history grep, 2) remove duplicates, 3) present everything in a way similar to zg and zx. To get the scripts, see: [https://github.com/jerabaul29/my_bash_scripts/blob/master/Readme.md](https://github.com/jerabaul29/my_bash_scripts/blob/master/Readme.md), section "histg.sh and histx.sh". Once these are installed, I can perform searches with ```hg``` (history Grep) and ```hx``` (history eXecute) such as:
 
 ```bash
 ~$ hg pass generate symbol  # look for previous commands that contain the strings "pass", "generate", and "symbol"
