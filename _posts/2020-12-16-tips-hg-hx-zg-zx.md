@@ -9,7 +9,7 @@ When performing daily work, there are a number of very repetitive tasks that qui
 
 # Navigating between folders and paths
 
-My favorite tool for navigating between folders and paths is is to use the ```z``` script, available on github: [https://github.com/rupa/z](https://github.com/rupa/z) . This is a pure bash script that tracks which folders you work from, and offers a "frecency" ranking of these. In addition, I created a couple of very simple wrappers around ```z``` to make it easier to use in my workflow. These are the ```zg``` (z-Grep) and ```zx``` (z-eXecute) scripts, that are available on my github: [https://github.com/jerabaul29/my_bash_scripts](https://github.com/jerabaul29/my_bash_scripts) ,  see the Readme section "zg.sh and zx.sh" for more information and installation instructions.
+My favorite tool for navigating between folders and paths is to use the ```z``` script, available on github: [https://github.com/rupa/z](https://github.com/rupa/z) . This is a pure bash script that tracks which folders you work from, and offers a "frecency" ranking of these. In addition, I created a couple of very simple wrappers around ```z``` to make it easier to use in my workflow. These are the ```zg``` (z-Grep) and ```zx``` (z-eXecute) scripts, that are available on my github: [https://github.com/jerabaul29/my_bash_scripts](https://github.com/jerabaul29/my_bash_scripts) ,  see the Readme section "zg.sh and zx.sh" for more information and installation instructions.
 
 Using ```zg``` and ```zx``` is then very easy. After a bit of using your terminal "as usual" so that ```z``` can learn about your paths, you can use these by doing:
 
