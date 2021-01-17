@@ -27,7 +27,7 @@ Happily, there is one good formalism for description of rotations in 3D, which i
 
 In addition, a product between quaternions is defined as:
 
-<center> <img src="./quaternion_product.png" align="centre" class="post-img" alt="PID_formula1" width="45%" /> </center>
+<center> <img src="/assets/quaternions/quaternion_product.png" align="centre" class="post-img" alt="PID_formula1" width="45%" /> </center>
 
 Which makes it easy to compute rotations in 3D:
 
