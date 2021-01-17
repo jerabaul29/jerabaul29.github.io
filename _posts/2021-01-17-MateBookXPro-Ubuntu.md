@@ -32,16 +32,16 @@ Everything worked flawlessly.
 
 I did a few changes to the setup of the machine:
 
-- The nVidia card uses quite a lot of power on Ubuntu, which makes the laptop hot if running all the time. To avoid that, the solution is to only activate the GPU when needed. This can be done by:
+- The nVidia GPU card uses quite a lot of power on Ubuntu, which makes the laptop hot if running all the time. To avoid that, the solution is to only activate the GPU when needed. This can be done by:
 
-    - Opening nvidia X Server Settings
-    - Changing to NVIDIA On-Demand and reboot
+    - Opening nvidia X Server Settings,
+    - Changing to NVIDIA On-Demand and rebooting.
 
-This works out of the box: now my machine runs nice and cold, without the fan being active at all for casual use. As a note, the GPU is fully recognized, and the output of the  ```nvidia-smi``` looks good. Without any more power tuning, I get about 10 hours of battery in casual use.
+This works out of the box: now my machine runs nice and cold, without the fan being active at all for casual use. As a note, the GPU is fully recognized, and the output of the  ```nvidia-smi``` looks good. Without any more power tuning, I get about 10 hours of battery in casual use, more than enough for me.
 
 - The most amazing thing from my point of view is the possibility to set up battery thresholds out-of-the-box, without any tweaking requested. To increase my battery life, I like to limit it to 65% charge level at maximum, and to start again charging only when the level hits 50%. This avoids the "dead battery for always plugged in laptop" symptom. On all laptops I had owned previously, this was either impossible to set on Ubuntu 20.04, or needed to install additional software (tlp for Thinkpads). But everything is ready-to-use on the MBX with Ubuntu 20.04:
 
-    - I can set the maximum charge by writing it through: ```sudo vim /sys/class/power_supply/BAT0/charge_control_start_threshold``` and simply writing the max charging in percent (i.e. 65).
+    - I can set the maximum charge by writing it through: ```sudo vim /sys/class/power_supply/BAT0/charge_control_end_threshold``` and simply writing the max charging in percent (i.e. 65).
     
     - I can set the start charge threshold in the same way by writing to ```sudo vim /sys/class/power_supply/BAT0/charge_control_start_threshold``` and writing the threshold (50).
     
@@ -51,8 +51,8 @@ This is the first time I get my hand on a laptop where this works out of the box
 
 I also performed the usual Ubuntu customizations, like auto-hiding of the top bar and task launcher, changing to dark theme, etc. Just a few notes, as it is always a bit annoying to need to spend time googling for the solutions to these customizations:
 
-- To get the tiled desktops, I installed the ```Workspace Matrix``` extension.
-- To turn the App launched into a Dash with much more customization possibilities I installed the ```Dash to Dock``` extension.
+- To get the tiled desktops, I installed the ```Workspace Matrix``` gnome extension (from firefox).
+- To turn the App launched into a Dash with much more customization possibilities I installed the ```Dash to Dock``` gnome extension.
 
 Setting parameters for both extensions already improves things quite a bit. In addition, I needed a few tweaks to get all auto hiding to work as I want, in particular for the top bar. This requested:
 
@@ -63,4 +63,4 @@ Setting parameters for both extensions already improves things quite a bit. In a
 
 ## Conclusion
 
-These few steps provide an amazing, sleak Ubuntu 20.04 laptop. Without doubt the best machine I have ever experienced.
+These few steps provide an amazing, sleak Ubuntu 20.04 laptop. The battery life is excellent, and the battery thresholds mean that it will retain its performace for probably 10 years or so at least. The machine runs cold, nearly never uses the fan in casual workload, and is very responsive. I have not found any glitches on Ubuntu yet, and everything just worked fine. This is without doubt the best Ubuntu machine I have ever used.
