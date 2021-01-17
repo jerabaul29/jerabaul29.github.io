@@ -37,7 +37,15 @@ I did a few changes to the setup of the machine:
     - Opening nvidia X Server Settings
     - Changing to NVIDIA On-Demand and reboot
 
-This works out of the box: now my machine runs nice and cold, without the fan being active at all for casual use. As a note, the GPU is fully recognized, and the output of the  ```nvidia-smi``` looks good.
+This works out of the box: now my machine runs nice and cold, without the fan being active at all for casual use. As a note, the GPU is fully recognized, and the output of the  ```nvidia-smi``` looks good. Without any more power tuning, I get about 10 hours of battery in casual use.
 
-- The most amazing
+- The most amazing thing from my point of view is the possibility to set up battery thresholds out-of-the-box, without any tweaking requested. To increase my battery life, I like to limit it to 65% charge level at maximum, and to start again charging only when the level hits 50%. This avoids the "dead battery for always plugged in laptop" symptom. On all laptops I had owned previously, this was either impossible to set on Ubuntu 20.04, or needed to install additional software (tlp for Thinkpads). But everything is ready-to-use on the MBX with Ubuntu 20.04:
+
+    - I can set the maximum charge by writing it through: ```sudo vim /sys/class/power_supply/BAT0/charge_control_start_threshold``` and simply writing the max charging in percent (i.e. 65).
+    
+    - I can set the start charge threshold in the same way by writing to ```sudo vim /sys/class/power_supply/BAT0/charge_control_start_threshold```
+    
+This is the first time I get my hand on a laptop where this works out of the box!
+
+
 
