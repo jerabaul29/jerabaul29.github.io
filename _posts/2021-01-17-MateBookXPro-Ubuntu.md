@@ -47,6 +47,14 @@ This works out of the box: now my machine runs nice and cold, without the fan be
     
 This is the first time I get my hand on a laptop where this works out of the box on Ubuntu!
 
+Note however that the content of these files is wiped out at each reboot. So, in order to have these battery thresholds active each time the machine is started, these should be written each time boot takes place. There are several solutions for that: using ```cron``` and the sudo crontab, a ```udev``` rule, or a ```systemd``` service. I am most used to cron, so all I need to do is add a couple of entries there:
+
+```
+admin_jr@MBX20:~$ sudo crontab -e
+@reboot echo 70 > /sys/class/power_supply/BAT0/charge_control_end_threshold 
+@reboot echo 55 > /sys/class/power_supply/BAT0/charge_control_start_threshold 
+```
+
 ## Ubuntu customizations
 
 I also performed the usual Ubuntu customizations, like auto-hiding of the top bar and task launcher, changing to dark theme, etc. Just a few notes, as it is always a bit annoying to need to spend time googling for the solutions to these customizations:
@@ -63,4 +71,4 @@ Setting parameters for both extensions already improves things quite a bit. In a
 
 ## Conclusion
 
-These few steps provide an amazing, sleak Ubuntu 20.04 laptop. The battery life is excellent, and the battery thresholds mean that it will retain its performace for probably 10 years or so at least. The machine runs cold, nearly never uses the fan in casual workload, and is very responsive. I have not found any glitches on Ubuntu yet, and everything just worked fine. The build quality is excellent, the laptop feels robust, the keyboard is excellent too, and the screen is beautiful with very thin bezels. This is without doubt the best Ubuntu machine I have ever used, and I think the MBX line of products will become my new go-to laptops. The only regret I have is that I could not get a version with 32 or 48GB of RAM, but 16GB is enough for most of my non-professional uses.
+These few steps provide an amazing, sleek Ubuntu 20.04 laptop. The battery life is excellent, and the battery thresholds mean that it will retain its performace for probably 10 years or so at least. The machine runs cold, nearly never uses the fan in casual workload, and is very responsive. I have not found any glitches on Ubuntu yet, and everything just worked fine. The build quality is excellent, the laptop feels robust, the keyboard is excellent too, and the screen is beautiful with very thin bezels. This is without doubt the best Ubuntu machine I have ever used, and I think the MBX line of products will become my new go-to laptops. The only regret I have is that I could not get a version with 32 or 48GB of RAM, but 16GB is enough for most of my non-professional uses.
