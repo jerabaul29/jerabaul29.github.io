@@ -16,6 +16,7 @@ To setup pass and the pass repo on a new machine:
 ~$ git clone YOUR_GIT_REPO_CLONE_SSH_GIT_URL .password-store
 ~$ gpg --import YOUR_PATH_TO_PUBLIC_KEY
 ~$ gpg --edit-key YOUR_KEY_ID
+	# and inside the gpg CLI tool:
 	trust
 	5  # or set your trust level accordingly to what is reasonable
 	quit
