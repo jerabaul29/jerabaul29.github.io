@@ -5,7 +5,7 @@ date:   2021-06-27 15:00:00 +0200
 categories: jekyll update
 ---
 
-I am using password-store, the standard unix password manager, for keeping control of my passwords, usernames, SSH passphrases, etc. The content of my password manager is synchronized through a github private repository, which makes it very easy to keep things synchronized across machines. In order to have even higher security, I use a Nitrokey Pro 2 to hold my private key in a safe smartcard and perform all encryptions and decryptions. This is hopefully quite sure, and very convenient to use. There is a tiny bit of setup to do each time I use a new machine, which I describe in this post.
+I am using password-store, the standard unix password manager, for keeping control of my passwords, usernames, SSH passphrases, etc. The content of my password manager is synchronized through a github private repository, which makes it very easy to keep things synchronized across machines. In order to have even higher security, I use a Nitrokey Pro 2 to hold my private key in a safe smartcard and perform all encryptions and decryptions. This is hopefully quite sure, and very convenient to use. I have this set up nicely now (that may be the point of another post some day), but still, there is a tiny bit of setup to do each time I use a new machine, which I describe in this post.
 
 ## Seting up pass on a new machine
 
