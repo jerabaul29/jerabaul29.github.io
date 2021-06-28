@@ -17,9 +17,9 @@ To setup pass and the pass repo on a new machine:
 ~$ gpg --import YOUR_PATH_TO_PUBLIC_KEY
 ~$ gpg --edit-key YOUR_KEY_ID
 	# and inside the gpg CLI tool:
-	trust
+	trust  # edit the trust of your key
 	5  # or set your trust level accordingly to what is reasonable
-	quit
+	quit  # quit saving edits
 ```
 
 ## Setting up the GPG smartcard
