@@ -51,8 +51,8 @@ Note however that the content of these files is wiped out at each reboot. So, in
 
 ```
 admin_jr@MBX20:~$ sudo crontab -e
-@reboot echo 70 > /sys/class/power_supply/BAT0/charge_control_end_threshold 
-@reboot echo 55 > /sys/class/power_supply/BAT0/charge_control_start_threshold 
+@reboot sleep 20; echo 70 > /sys/class/power_supply/BAT0/charge_control_end_threshold 
+@reboot sleep 30; echo 55 > /sys/class/power_supply/BAT0/charge_control_start_threshold 
 ```
 
 ## Ubuntu customizations
