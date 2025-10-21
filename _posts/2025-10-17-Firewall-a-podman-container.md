@@ -88,9 +88,9 @@ Here, we add the `NET_ADMIN `capability also at the container run time, so that 
 
 ## Firewalling podman rootless containers in an effective and safe way
 
-The rights a podman container has inside its own namespace, as well as the capabilities dropping mechanism, can be used to effectively firewall apps. A way to do so, that we will use in the following, is to use OCI hooks to run code during the container creation, after the container namespace is created, but before the NET_ADMIN capability is dropped. For more details and alternative ways to do so, see [this discussion on the official podman github repository](https://github.com/containers/podman/discussions/27099) (this is anno 2025 and the state of podman, recommended ways to go forward, etc, may change with time). I also have a self contained example [on this github repository](https://github.com/jerabaul29/2025_podman_iptable_rules).
+The rights a podman container has inside its own namespace, as well as the capabilities dropping mechanism, can be used to effectively firewall apps. A way to do so, that we will use in the following, is to use OCI hooks to run code during the container creation, after the container namespace is created, but before the `NET_ADMIN` capability is dropped. For more details and alternative ways to do so, see [this discussion on the official podman github repository](https://github.com/containers/podman/discussions/27099) (this is anno 2025 and the state of podman, recommended ways to go forward, etc, may change with time). I also have a self contained example [on this github repository](https://github.com/jerabaul29/2025_podman_iptable_rules).
 
-At the moment (this may change with time if simpler ways to run OCI hooks get implemented into podman), this is a bit technical and requires a few steps:
+At the moment (again this may change with time if simpler ways to run OCI hooks get implemented into podman), this is a bit technical and requires a few steps:
 
 - OCI hooks run bash scripts and can be triggered at different points in the container lifetime - this means that one needs to write the corresponding bash scripts
 - the hooks themselves are defined in .json files; they point to the bash scripts to run, and contain information about when they should be triggered
@@ -116,7 +116,7 @@ We can take a simple example inspired from [the github repository proof of conce
 }
 ```
 
-You can observe a few things here: the path to the script to run needs to be a fully qualified path; the hook triggering mechanism is to detect a regexp matching to the `apply_iptable_hook` string to one of the annotations attached to a podman run command; the stage at which the bash script will be run is `createContainer`, which is a point in the container running chain when the container namespace is set up, but the container app is not started yet and the NET_ADMIN capabilities are not dropped yet.
+You can observe a few things here: the path to the script to run needs to be a fully qualified path; the hook triggering mechanism is to detect a regexp matching to the `apply_iptable_hook` string to one of the annotations attached to a podman run command; the stage at which the bash script will be run is `createContainer`, which is a point in the container running chain when the container namespace is set up, but the container app is not started yet and the `NET_ADMIN` capabilities are not dropped yet.
 
 - The firewalling script itself:
 
@@ -162,9 +162,6 @@ RUN apt-get update && \
     apt-get install -y iptables --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-ENV TERM xterm-256color
-ENV COLORTERM truecolor
 ```
 
 - We can now run this example as:
@@ -187,12 +184,12 @@ uid=0(root) euid=0(root)
 gid=0(root)
 groups=
 Guessed mode: HYBRID (4)
-root@94a09787a893:/# nc -w 3 -z 1.1.1.1 53 || true
+root@94a09787a893:/# nc -w 3 -z 1.1.1.1 53
 Connection to 1.1.1.1 53 port [tcp/domain] succeeded!
 root@94a09787a893:/# nc -w 3 -z 8.8.8.8 53   
 root@94a09787a893:/# echo $?
 1
-root@94a09787a893:/# nc -w 3 -z vg.no 80 || true
+root@94a09787a893:/# nc -w 3 -z vg.no 80
 nc: getaddrinfo for host "vg.no" port 80: Temporary failure in name resolution
 
 /tmp/example_firewall> cat log_firewall.log 
@@ -214,10 +211,10 @@ Finished set_iptable_rules_denayll.sh hook
 
 This shows that the whole chain of events is working as expected, and that the runtime app and commands run inside the podman container are effectively firewalled:
 
-- The log_firewall.log logs show that the hook was well called and iptable rules have well been set up; all traffic is denied, except to and from the IP 1.1.1.1 .
+- The log_firewall.log logs show that the hook was well called and iptable rules have well been set up by the hook; all traffic is denied, except to and from the IP 1.1.1.1 .
 - Inside the container, the cap_net_admin is dropped (as visible in the capsh output by the !cap_net_admin)
 - We can observe that the firewalling rules are well working inside the container: it is possible to talk to the 1.1.1.1 IP, but not to the 8.8.8.8 IP; the vg.no server cannot be reached - communication to it is firewalled, but this fails even earlier: the request to DNS servers to get the IP of the vg.no server cannot even be reached.
 
 ## To go further
 
-This illustrates how applications run inside a podman container in rootless mode, without NET_ADMIN capabilities, can be effectively firewalled. This is only one of the way to go - it could be possible in different podman run modes to leverage other mechanisms to firewall applications, see [the discussion on the podman repository](https://github.com/containers/podman/discussions/27099). In addition, the APIs and ways to run hooks may change, or new ways to run them may be added in the future - follow the discussions on the podman repository and the podman documentation!
+This illustrates how applications run inside a podman container in rootless mode, without `NET_ADMIN` capabilities set, can be effectively firewalled. This is only one of the way to go - it could be possible in different podman run modes to leverage other mechanisms to firewall applications, see [the discussion on the podman repository](https://github.com/containers/podman/discussions/27099). In addition, the APIs and ways to run hooks may change, or new ways to run them may be added in the future - follow the discussions on the podman repository and the podman documentation!
