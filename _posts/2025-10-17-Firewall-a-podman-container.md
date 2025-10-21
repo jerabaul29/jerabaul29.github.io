@@ -6,6 +6,7 @@ categories: jekyll update
 ---
 
 *Disclaimer: I am not a podman nor a security expert. In addition, these explanations are valid as of October 2025 and focus on podman rootless containers: things may change with time, and be different for non-standard rootless ways to run podman containers!*
+
 *Disclaimer: I wrote this post together with claude-sonnet-4.5; I took care of the structuring ideas and most of the writing, and claude only helped me with the language and fixing consistency issues across the post; I quality checked all changes by claude.*
 
 This blog post discusses podman container firewalling: why it is important, and how to do it in practice, with examples and explanations.
