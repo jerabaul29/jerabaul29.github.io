@@ -55,7 +55,7 @@ Before actually implementing firewalling of an individual container, we will qui
 
 What makes containers such as podman containers possible is a set of Linux kernel features such as namespaces, chroot, and more. These features allow isolating and encapsulating how code is run, and running code with root power inside a given namespace. This allows code to perform root-level actions that are confined into a namespace, without the ability to perform root actions outside of it. At a high level, when starting a podman rootless container, podman sets up a dedicated namespace in which the container will be run. Inside this namespace, it is possible to have root-level rights, such as changing firewall properties that apply to the network of this namespace (even though, of course, firewall modification of the encapsulating host is not possible). When using a rootless container under "standard" conditions (see below), these capabilities are dropped when the container app starts. This means, in practice, that the container app gets firewalled without the possibility to break out.
 
-Let us illustrate this with a small example, with a new Containerfile (and yes, I know, I should use a more recent tool than `ifconfig` anno 2025+; but hey, old habits die hard):
+Let us illustrate this with a small example, with a new Containerfile (and yes, I know, I should use a more recent tool than `iptables` anno 2025+; but hey, old habits die hard):
 
 ```bash
 FROM ubuntu:latest
