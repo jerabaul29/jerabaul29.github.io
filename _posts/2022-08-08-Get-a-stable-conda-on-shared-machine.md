@@ -152,6 +152,81 @@ conda: command not found
 
 ```
 
+## Be aware of outdated software and the associated risks for keeping and running outdated software with conda installed programs
+
+Conda is very convenient, but comes with a major drawback: it makes it easy to run outdated software, and the user (you) will not get help (for example, getting notification) about it. Software installed in a conda environment is not kept up to date by your OS software package manager, and it is your responsibility as the owner and user of the conda environment to make sure that software is kept up to date. This is especially important with regards to vulnerabilities and security holes when running code on data or input you do not trust, or exposing anything to the internet - keeping software up to date is then a major factor for keeping your system safe. To make sure that you use up to date software, a good solution can be to define your conda environment in an `environment.yml` file that specifies the packages you need but without pinning these to a specific version, and to regularly re-install a new fresh environment from it. As the packages within the environment will have been updated after a new install, you will have to check that your user code still works (for example by running test suites).
+
+In order to export an `environment.yml` file that summarizes the packages that are installed in a given environment following a user requirements (ignoring dependencies that may be pulled by these user-required packages), you can use the `conda env export --no-builds --from-history > environment.yml` command, for example:
+
+```bash
+(dev) /tmp> conda env export --no-builds --from-history > environment.yml
+(dev) /tmp> cat environment.yml                                                                                                                           
+name: dev                                                                                                                                                            
+channels:                                                                                                                                                            
+  - conda-forge                                                                                                                                                      
+  - defaults                                                                                                                                                         
+dependencies:                                                                                                                                                        
+  - matplotlib                                                                                                                                                       
+  - numpy                                                                                                                                                            
+  - scipy                                                                                                                                                            
+  - trajan                                                                                                                                                           
+  - xarray                                                                                                                                                           
+  - pytest                                                                                                                                                           
+  - pytest-benchmark                                                                                                                                                 
+  - coloredlogs                                                                                                                                                      
+  - h5netcdf                                                                                                                                                         
+  - netcdf4                                                                                                                                                          
+  - zarr                                                                                                                                                             
+  - dask                                                                                                                                                             
+  - scikit-learn                                                                                                                                                     
+  - seaborn                                                                                                                                                          
+  - sympy                                                                                                                                                            
+  - cmocean
+prefix: /home/my_username/miniconda3/envs/dev
+```
+
+Installing a new environment that contains these packages, in the most up to date set that does not create conflicts (following the conda's built-in logics), simply edit this file as needed (for example, I edit the `name` attribute to `dev-new` for this example and I remove the `prefix` entry line to make sure I install under a new name and path), and run `conda env create -f environment.yml`:
+
+```bash
+(dev) /tmp> conda deactivate
+/tmp> conda env create -f environment.yml 
+Retrieving notices: ...working... done
+Channels:
+ - conda-forge
+ - defaults
+Platform: linux-64
+Collecting package metadata (repodata.json): done
+Solving environment: done
+
+Downloading and Extracting Packages:
+                                                                                                                                                                     
+Preparing transaction: done                                                                                                                                          
+Verifying transaction: done                                                                                                                                          
+Executing transaction: done                                                                                                                                          
+#                                                                                                                                                                    
+# To activate this environment, use                                                                                                                                  
+#                                                                                                                                                                    
+#     $ conda activate dev-new                                                                                                                                       
+#                                                                                                                                                                    
+# To deactivate an active environment, use                                                                                                                           
+#                                                                                                                                                                    
+#     $ conda deactivate   
+```
+
+The resulting environment has (hopefully, there may be package version conflicts that still result in outdated software!) up to date packages and should be now ready to use - though, make sure to run tests and chack that your code still runs as expected, as there may have been breaking changes introduced, and check that you actually did get recent versions of critical software:
+
+```bash
+(dev) /tmp> python3 --version
+Python 3.13.0         
+(dev) /tmp> python3 -c "import numpy as np; print(np.__version__)"
+2.1.2
+(dev) /tmp> conda activate dev-new
+(dev-new) /tmp> python3 --version
+Python 3.14.0
+(dev-new) /tmp> python3 -c "import numpy as np; print(np.__version__)"
+2.3.5
+```
+
 ## Best practice: don't annoy your admin!
 
 This is really convenient, but also opens the door for possible abuse. Make sure not to annoy your admin, and make sure that what you do complies with the policies set for using the server.
