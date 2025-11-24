@@ -247,7 +247,7 @@ CMD /usr/sbin/iptables; nc -w 3 -z 8.8.8.8 53 || echo "Error: Network unavailabl
 
 with the following "malicious" `iptables` being copied into the container:
 
-```
+```bash
 /tmp/tests_iptables> cat iptables.sh 
 #!/bin/bash
 
@@ -257,7 +257,7 @@ echo "As an evil iptables inside the container, I tell policy DENY on everything
 
 and our usual `firewall.sh` (remember to make it executable with `chmod +x firewall.sh`):
 
-```
+```bash
 /tmp/tests_iptables> cat firewall.sh 
 #!/bin/bash
 
