@@ -218,6 +218,102 @@ This shows that the whole chain of events is working as expected, and that the r
 - Inside the container, `cap_net_admin` is dropped (as visible in the capsh output by the `!cap_net_admin`)
 - We can observe that the firewalling rules are working correctly inside the container: it is possible to communicate with the 1.1.1.1 IP, but not with the 8.8.8.8 IP; the vg.no server cannot be reached - communication to it is firewalled, but this fails even earlier: the request to DNS servers to resolve the IP of the vg.no server cannot even be completed.
 
+Also, note that the firwalling is reliably and robustly applied as long as the host machine and its binaries are not compromised and there are no bugs in the `podman` tool (make sure to keep `podman` up to date in case CVEs are found and fixed!), even in the worst case scenario when a malicious container is run (even though you should put every effort into making sure you only run good and trusted software, CVEs and supply chain attacks happen). Indeed, the firewalling tool run through the OCI hook at the `createContainer` stage is the one from the host machine, not from the container. This also means that the corresponding tool needs to be available on the host for the hook to work. This is briefly explained into [the podman documentation](https://github.com/opencontainers/runtime-spec/blob/main/config.md#createcontainer-hooks), which stipulates (retrieved 2025-11) that "The createContainer hooks' path MUST resolve in the runtime namespace. The createContainer hooks MUST be executed in the container namespace." This means that the hook run at this stage is run inside the container namespace (so it affects the container network and root commands can be applied inside this namespace), but that it needs to use host binaries and executable. So even a malicious "lying" `iptables` or other firewalling tool inside the container image will not be able to break or circumvent the firewalling.
+
+This can be illustrated by a small test, where we actively write a "malicious" `iptables` executable into the container, that does not apply firewalling rules but instead print a message: the containerfile is defined as:
+
+```bash
+/tmp/tests_iptables> cat Containerfile
+# Use the latest Ubuntu image
+FROM ubuntu:latest
+
+# Install netcat (nc)
+# Note: ping does not work in rootless containers as it uses suid or NET_ADMIN which are not allowed
+RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
+
+# Install a fake iptables that lies in all paths I can think about
+COPY ./iptables.sh /usr/local/bin/iptables
+RUN chmod +x /usr/local/bin/iptables
+COPY ./iptables.sh /usr/sbin/iptables
+RUN chmod +x /usr/sbin/iptables
+COPY ./iptables.sh /usr/bin/iptables
+RUN chmod +x /usr/bin/iptables
+
+# Run the command `nc -w 3 -z 8.8.8.8 53` to check connectivity to Google's DNS server
+CMD /usr/sbin/iptables; nc -w 3 -z 8.8.8.8 53 || echo "Error: Network unavailable or unable to reach 8.8.8.8 on port 53"
+```
+
+with the following "malicious" `iptables` being copied into the container:
+
+```
+/tmp/tests_iptables> cat iptables.sh 
+#!/bin/bash
+
+echo "I am a fake iptables inside the container, and I lie to you :evil-face:"
+echo "As an evil iptables inside the container, I tell policy DENY on everything, but this is just a lie"  
+```
+
+and our usual `firewall.sh` (remember to make it executable with `chmod +x firewall.sh`):
+
+```
+/tmp/tests_iptables> cat firewall.sh 
+#!/bin/bash
+
+LOGFILE="/tmp/tests_iptables/log_firewall.log"
+
+echo "Start firewall.sh hook" > $LOGFILE 2>&1
+
+echo -n "whoami: " >> $LOGFILE 2>&1
+whoami >> $LOGFILE 2>&1
+
+# Block all traffic by default
+iptables -P INPUT DROP >> $LOGFILE 2>&1
+iptables -P OUTPUT DROP >> $LOGFILE 2>&1
+iptables -P FORWARD DROP >> $LOGFILE 2>&1
+# Allow traffic to and from 1.1.1.1 as an example
+iptables -A INPUT -s 1.1.1.1 -j ACCEPT
+iptables -A OUTPUT -d 1.1.1.1 -j ACCEPT
+
+# Log the applied rules (optional, for debugging)
+echo "Applied iptables rules:" >> $LOGFILE 2>&1
+echo -n "iptables -L -v: " >> $LOGFILE 2>&1
+iptables -L -v >> $LOGFILE 2>&1
+
+echo "Finished firewall.sh hook" >> $LOGFILE 2>&1
+```
+
+and `iptables_hook.json` files:
+
+```bash
+/tmp/tests_iptables> cat hook/iptables_hook.json 
+{
+    "version": "1.0.0",
+    "hook": {
+        "path": "/tmp/tests_iptables/firewall.sh"
+    },
+    "when": {
+        "annotations": {
+            "^apply_lying_iptables_hook$": ".+"
+        }
+    },
+    "stages": ["createContainer"]
+}
+```
+
+Building and running the container, the "malicious" iptable is well called at container runtime (because it is this `iptables` that is available inside the container), but firewalling still works just fine (because at the OCI hook stage `createContainer`, the host's, not the container's, `iptables` was used):
+
+```bash
+/tmp/tests_iptables> podman build -t lying_iptables .
+STEP 1/9: FROM ubuntu:latest
+...
+Successfully tagged localhost/lying_iptables:latest
+3017bdcc2832d870dbbaccbfdd538f491f22f64050680e09d77b071db4e65cb7
+/tmp/tests_iptables> podman run --rm --annotation apply_lying_iptables_hook=true --hooks-dir /tmp/tests_iptables/hook/ -it localhost/lying_iptables:latest
+I am a fake iptables inside the container, and I lie to you :evil-face:
+As an evil iptables inside the container, I tell policy DENY on everything, but this is just a lie
+Error: Network unavailable or unable to reach 8.8.8.8 on port 53
+```
+
 ## To go further
 
 This illustrates how applications run inside a podman container in rootless mode, without `NET_ADMIN` capabilities set, can be effectively firewalled. This is only one way to go - it could be possible in different podman run modes to leverage other mechanisms to firewall applications, see [the discussion on the podman repository](https://github.com/containers/podman/discussions/27099). In addition, the APIs and ways to run hooks may change, or new ways to run them may be added in the future - follow the discussions on the podman repository and the podman documentation!
